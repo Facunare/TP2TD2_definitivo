@@ -5,12 +5,12 @@ CXXFLAGS= -fshow-column -fshow-column -fno-diagnostics-show-caret  -g2 -Wall -O0
 LDFLAGS= -static-libstdc++ -static-libgcc   
 OBJS=Debug\main.o Debug\predict.o Debug\utils.o 
 
-all: Debug Debug\td2.exe
+all: Debug Debug\MiProyecto.exe
 
 clean:
-	del ${OBJS} Debug\td2.exe
+	del ${OBJS} Debug\MiProyecto.exe
 
-Debug\td2.exe: ${OBJS}
+Debug\MiProyecto.exe: ${OBJS}
 	${GPP} ${OBJS} ${LDFLAGS} -o $@
 
 Debug:
