@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include "utils.h"
 
+// predictAndPrintAll ejecuta la funcion keysPredictRun, impriminiendo todas las palabras que comienzan
+// por un prefijo especifico, y luego liberandolas de la memoria.
 void predictAndPrintAll(struct keysPredict* kt, char* partialWord) {
 	int wordsCount = 0;
 	char** words = keysPredictRun(kt, partialWord, &wordsCount);

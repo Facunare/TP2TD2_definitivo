@@ -12,7 +12,7 @@ int validate(char* w) {
     return 1;
 }
 
-int main(int argc, char *argv[]) {
+int main2(int argc, char *argv[]) {
 
     // Mensaje de ayuda
 

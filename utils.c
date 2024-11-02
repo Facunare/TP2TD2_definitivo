@@ -84,9 +84,10 @@ void keysPredictRemoveWord(struct keysPredict* kt, char* word) {
 			}
 			// si llego al final de la palabra, la borra.
 			if((strLen(word)-1)==index_palabra && founded->end == 1){
+				free(founded->word);
 				founded->word = 0;
 				founded->end = 0;
-				free(founded->word);
+				
 				kt->totalWords--;
 			}
 			
@@ -116,7 +117,7 @@ struct node* keysPredictFind(struct keysPredict* kt, char* word) {
 			int equal = 1;
 			if(founded->end == 1){
 				// compara la palabra del nodo con la pasada por parametro
-				for(int i = 0; i<strLen(word) || i<strLen(founded->word); i++){
+				for(int i = 0;i<strLen(founded->word); i++){
 					if(founded->word[i] != word[i]){
 						equal = 0;
 					}
