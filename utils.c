@@ -1,6 +1,7 @@
 #include "utils.h"
 
-// strLen devuelve la longitud total de una cadena de caracteres.
+// strLen devuelve la longitud total de una cadena de caracteres. Recorre la cadena pasada por parametro
+// hasta encontrar el caracter NULL, incrementando el contador por cada NO NULL.
 int strLen(char* src) {
 	int contador = 0;
 	
@@ -11,7 +12,8 @@ int strLen(char* src) {
     return contador;
 }
 
-// strDup genera una copia del string pasado por parametro
+// strDup genera una copia del string pasado por parametro. Copia cada caracter de la cadena a la nueva ubicacion en memoria
+// y finaliza copiando el caracter NULL.
 char* strDup(char* src) {
 
 	char* copia = (char*)malloc((sizeof(char))*(strLen(src)+1)); 
@@ -26,7 +28,6 @@ char* strDup(char* src) {
 }
 
 // KeysPredictNew genera una nueva estructura keysPredict.
-
 struct keysPredict* keysPredictNew() {
     struct keysPredict* kt = (struct keysPredict*)malloc(sizeof(struct keysPredict));
     kt->first = 0;
@@ -36,6 +37,13 @@ struct keysPredict* keysPredictNew() {
 }
 
 // keysPredictAddWord agrega una nueva palabra a la estructura keysPredict
+// La idea es recorrer la cadena `word` carácter por carácter, asegurando que cada uno
+// exista como nodo en el nivel correspondiente. Si un nodo no existe, se crea un nuevo nodo en el
+// nivel actual. Al llegar al último carácter, marca el nodo como el final de la palabra y guarda
+// la palabra completa en este nodo.
+//
+// Esto resuelve el problema de agregar palabras de forma estructurada, permitiendo la predicción y
+// evitando duplicados, ya que se verifican y crean nodos solo cuando son necesarios.
 void keysPredictAddWord(struct keysPredict* kt, char* word) {
 	
 	// chequea que no sea una cadena vacia.
@@ -71,6 +79,11 @@ void keysPredictAddWord(struct keysPredict* kt, char* word) {
 }
 
 // keysPredictRemoveWord se encarga de borrar una palabra de la estructura kt.
+// Resuelve el problema porque navega por la estructura hasta el último carácter de la palabra,
+// verificando que cada carácter de `word` exista en el nivel correspondiente. Al llegar al
+// último carácter, si este marca el final de una palabra (end == 1), se libera la memoria
+// de la palabra almacenada.
+// Esto asegura que solo se eliminen palabras completas, preservando la estructura.
 void keysPredictRemoveWord(struct keysPredict* kt, char* word) {
 	if(kt->first != NULL){
 		int index_palabra = 0;
@@ -98,7 +111,11 @@ void keysPredictRemoveWord(struct keysPredict* kt, char* word) {
 }
 
 // keysPredictFind se encarga de encontrar una palabra en la estructura kt.
-// retorna NULL si no la encuentra; si la encuentra retorno el puntero al nodo.
+// Navega por la estructura, caracter por caracter, para determinar si la palabra
+// existe. Si la palabra no se encuentra, retorna NULL; de lo contrario, retorna el puntero al nodo
+// Esta función resuelve el problema de buscar una palabra en una estructura de nodos,
+// permitiendo verificar si una palabra completa está almacenada y devolviendo información sobre su ubicación
+// en la estructura.
 struct node* keysPredictFind(struct keysPredict* kt, char* word) {
 	if(kt == NULL){
 		return NULL;
@@ -124,7 +141,7 @@ struct node* keysPredictFind(struct keysPredict* kt, char* word) {
 				}
 				
 				// si son iguales retorna el puntero
-				if(equal==1){
+				if(equal==1 && (strLen(founded->word)==strLen(word))){
 					return founded;	
 				}				
 			}
@@ -132,10 +149,15 @@ struct node* keysPredictFind(struct keysPredict* kt, char* word) {
 		pp = &(founded->down);
 		index_palabra++;
 	}
+	return NULL;
 }
 
 
 // keysPredictRun retorna un arreglo de strings con todas las palabras comenzadas por un prefijo especifico.
+// La idea principal es navegar por la estructura keysPredict hasta el nodo
+// correspondiente al último carácter del prefijo, y luego contar y almacenar las palabras que siguen
+// a este nodo. Esto permite obtener una lista de palabras que coinciden con el prefijo proporcionado.
+// Esta función resuelve el problema de buscar eficientemente palabras en una estructura de datos
 char** keysPredictRun(struct keysPredict* kt, char* partialWord, int* wordsCount) {
 	if(kt->first == NULL || strLen(partialWord) == NULL){
 		return NULL;
@@ -178,7 +200,10 @@ char** keysPredictRun(struct keysPredict* kt, char* partialWord, int* wordsCount
 }
 
 // keysPredictCountWordAux es una funcion recursiva que cuenta el numero de palabras o inserta las palabras 
-// encontradas en el arreglo de strings, segun se especifique. 
+// encontradas en el arreglo de strings, segun se especifique. La idea principal es recorrer la lista de nodos y, al llegar a un nodo que marca el fin
+// de una palabra, decidir si se debe contar la palabra o almacenarla en el arreglo proporcionado.
+// Esta función resuelve el problema de acceder a todas las palabras almacenadas en distintos niveles,
+// permitiendo tanto contar como almacenar palabras.
 int keysPredictCountWordAux(struct node* n, int cont, char** foundWords) {
 	struct node* current = n;
 	
@@ -200,6 +225,8 @@ int keysPredictCountWordAux(struct node* n, int cont, char** foundWords) {
 }
 
 // keysPredictListAll se encarga de listar todas las palabras almacenadas
+// La idea principal es contar el número de palabras y luego almacenar cada palabra en un arreglo.
+// La función resuelve el problema de acceder a todas las palabras de manera eficiente y organizada.
 char** keysPredictListAll(struct keysPredict* kt, int* wordsCount) {
 	
 	struct node** pp = &(kt->first);
@@ -214,7 +241,7 @@ char** keysPredictListAll(struct keysPredict* kt, int* wordsCount) {
 	return foundWords;
 }
 
-// keysPredictDelete se encarga de eliminar recursivamente toda la estructura keysPredict, nodo por nodo.
+// keysPredictDelete se encarga de eliminar recursivamente toda la estructura keysPredict, nodo por nodo. Incluyendo el nodo raiz y finalmente el KT.
 void keysPredictDelete(struct keysPredict* kt) {
 	keysPredictDeleteAux(kt->first, kt);
 	kt->first = NULL;
@@ -224,7 +251,9 @@ void keysPredictDelete(struct keysPredict* kt) {
 }
 
 // keysPredictDeleteAux es una funcion auxiliar que se encarga de recorrer toda la estructura recursivamente eliminando cada nodo del kt
-// (si es un nodo correspondiente a una palabra, eliminar la misma)
+// La idea principal es asegurar que se eliminen todos los nodos del nivel actual, y en niveles inferiores. 
+// Si un nodo corresponde a una palabra, también se libera la memoria de la misma.
+// Esto resuelve el problema de limpiar la memoria de la estructura.
 void keysPredictDeleteAux(struct node* n, struct keysPredict* kt) {
 	if(!n) return;
 	struct node* current = n;
@@ -245,7 +274,6 @@ void keysPredictDeleteAux(struct node* n, struct keysPredict* kt) {
 		kt->totalKeys--;
 		current = temp;
 	}
-
 }
 
 // keysPredictPrint imprime una vista jerarquica de todas las palabras almacenadas en
@@ -277,7 +305,8 @@ void keysPredictPrintAux(struct node* n, int level) {
 // Auxiliar functions
 
 // findNodeInLevel se encarga de comprobar si un nodo se encuentra presente en un nivel especifico del keysPredict
-// Si lo encuentra, retorna el puntero al mismo; caso contrario devuelve NULL.
+// Recorre la lista de nodos hasta encontrar el nodo que coincida con el carácter dado. Si encuentra el nodo, 
+// se devuelve el puntero; de lo contrario, se devuelve NULL.
 struct node* findNodeInLevel(struct node** list, char character) {
 	
 	// comprobar si la lista esta vacia

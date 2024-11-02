@@ -215,6 +215,7 @@ int main() {
 	predictAndPrintAll(kt,"casa");
 	
 	// Diccionario 4. keysPredict casos grandes
+	printf("\n\nDiccionario 4.\n\n");
 	struct keysPredict* kt4 = keysPredictNew();
 	
 	keysPredictAddWord(kt4, "distancia");
@@ -404,14 +405,16 @@ int main() {
 	predictAndPrintAll(kt4,"z"); // prefijo de un caracter que no está
 	predictAndPrintAll(kt4,"v"); // prefijo en la "superficie" del kt
 	predictAndPrintAll(kt4,"ventan"); // prefijo en lo "profundo" del kt
-	
+
 	findAndPrintAll(kt4, "servicio");
 	findAndPrintAll(kt4, "ventanal");
 	findAndPrintAll(kt4, "");
 	findAndPrintAll(kt4, "ventanales");
 	findAndPrintAll(kt4, "v");
 	
+
 	// Diccionario 5. keysPredict vacio
+	printf("\n\nDiccionario 5.\n\n");
 	struct keysPredict* kt5 = keysPredictNew();	// probar todo para un diccionario vacio
 	keysPredictPrint(kt5);
 	findAndPrintAll(kt5, "ventanal");
@@ -425,14 +428,12 @@ int main() {
 	}
 	
 	deleteArrayOfWords(wordsVacio, wordsCountVacio);
-	keysPredictDelete(kt5);
-	
 	
 	keysPredictDelete(kt);
 	keysPredictDelete(kt2);
 	keysPredictDelete(kt3);
 	keysPredictDelete(kt4);
-
+	keysPredictDelete(kt5);
 
 	return 0;
 }
